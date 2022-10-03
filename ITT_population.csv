@@ -1,0 +1,470 @@
+ID,Treatment,site
+PLT-TH1-001,Ivermectin,TH1
+PLT-TH1-002,Regeneron,TH1
+PLT-TH1-003,Remdesivir,TH1
+PLT-TH1-004,No study drug,TH1
+PLT-TH1-005,Favipiravir,TH1
+PLT-TH1-006,Favipiravir,TH1
+PLT-TH1-007,No study drug,TH1
+PLT-TH1-008,Regeneron,TH1
+PLT-TH1-009,Regeneron,TH1
+PLT-TH1-010,Ivermectin,TH1
+PLT-TH1-011,Ivermectin,TH1
+PLT-TH1-012,Remdesivir,TH1
+PLT-TH1-013,Favipiravir,TH1
+PLT-TH1-014,Regeneron,TH1
+PLT-TH1-015,Ivermectin,TH1
+PLT-TH1-016,Remdesivir,TH1
+PLT-TH1-017,No study drug,TH1
+PLT-TH1-018,No study drug,TH1
+PLT-TH1-019,Remdesivir,TH1
+PLT-TH1-020,No study drug,TH1
+PLT-TH1-021,Regeneron,TH1
+PLT-TH1-022,Remdesivir,TH1
+PLT-TH1-023,Regeneron,TH1
+PLT-TH1-024,Ivermectin,TH1
+PLT-TH1-025,Favipiravir,TH1
+PLT-TH1-026,Ivermectin,TH1
+PLT-TH1-027,Favipiravir,TH1
+PLT-TH1-028,No study drug,TH1
+PLT-TH1-029,Favipiravir,TH1
+PLT-TH1-030,Remdesivir,TH1
+PLT-TH1-031,Remdesivir,TH1
+PLT-TH1-032,Regeneron,TH1
+PLT-TH1-033,Favipiravir,TH1
+PLT-TH1-034,Ivermectin,TH1
+PLT-TH1-035,No study drug,TH1
+PLT-TH1-036,No study drug,TH1
+PLT-TH1-037,Ivermectin,TH1
+PLT-TH1-038,Regeneron,TH1
+PLT-TH1-039,Remdesivir,TH1
+PLT-TH1-040,Ivermectin,TH1
+PLT-TH1-041,No study drug,TH1
+PLT-TH1-042,Favipiravir,TH1
+PLT-TH1-043,Regeneron,TH1
+PLT-TH1-044,Remdesivir,TH1
+PLT-TH1-045,Ivermectin,TH1
+PLT-TH1-046,Remdesivir,TH1
+PLT-TH1-047,Ivermectin,TH1
+PLT-TH1-048,Favipiravir,TH1
+PLT-TH1-049,No study drug,TH1
+PLT-TH1-050,Regeneron,TH1
+PLT-TH1-051,Ivermectin,TH1
+PLT-TH1-052,Regeneron,TH1
+PLT-TH1-053,No study drug,TH1
+PLT-TH1-054,Regeneron,TH1
+PLT-TH1-055,Favipiravir,TH1
+PLT-TH1-056,No study drug,TH1
+PLT-TH1-057,Favipiravir,TH1
+PLT-TH1-058,Ivermectin,TH1
+PLT-TH1-059,Remdesivir,TH1
+PLT-TH1-060,Remdesivir,TH1
+PLT-TH1-061,Favipiravir,TH1
+PLT-TH1-062,Remdesivir,TH1
+PLT-TH1-063,Favipiravir,TH1
+PLT-TH1-064,Remdesivir,TH1
+PLT-TH1-065,Favipiravir,TH1
+PLT-TH1-066,Ivermectin,TH1
+PLT-TH1-067,Regeneron,TH1
+PLT-TH1-068,No study drug,TH1
+PLT-TH1-069,No study drug,TH1
+PLT-TH1-070,Regeneron,TH1
+PLT-TH1-071,Remdesivir,TH1
+PLT-TH1-072,No study drug,TH1
+PLT-TH1-073,Remdesivir,TH1
+PLT-TH1-074,Favipiravir,TH1
+PLT-TH1-075,Ivermectin,TH1
+PLT-TH1-076,Favipiravir,TH1
+PLT-TH1-077,No study drug,TH1
+PLT-TH1-078,Remdesivir,TH1
+PLT-TH1-079,Regeneron,TH1
+PLT-TH1-080,Ivermectin,TH1
+PLT-TH1-081,No study drug,TH1
+PLT-TH1-082,Regeneron,TH1
+PLT-TH1-083,Favipiravir,TH1
+PLT-TH1-084,Favipiravir,TH1
+PLT-TH1-085,Ivermectin,TH1
+PLT-TH1-086,No study drug,TH1
+PLT-TH1-087,Remdesivir,TH1
+PLT-TH1-088,Ivermectin,TH1
+PLT-TH1-089,Favipiravir,TH1
+PLT-TH1-090,Remdesivir,TH1
+PLT-TH1-091,Remdesivir,TH1
+PLT-TH1-092,Regeneron,TH1
+PLT-TH1-093,Ivermectin,TH1
+PLT-TH1-094,Ivermectin,TH1
+PLT-TH1-095,Favipiravir,TH1
+PLT-TH1-096,Favipiravir,TH1
+PLT-TH1-097,Favipiravir,TH1
+PLT-TH1-098,No study drug,TH1
+PLT-TH1-099,No study drug,TH1
+PLT-TH1-100,Remdesivir,TH1
+PLT-TH1-101,Favipiravir,TH1
+PLT-TH1-102,Favipiravir,TH1
+PLT-TH1-103,Regeneron,TH1
+PLT-TH1-104,Ivermectin,TH1
+PLT-TH1-105,Ivermectin,TH1
+PLT-TH1-106,Regeneron,TH1
+PLT-TH1-107,No study drug,TH1
+PLT-TH1-108,Remdesivir,TH1
+PLT-TH1-109,Favipiravir,TH1
+PLT-TH1-110,Remdesivir,TH1
+PLT-TH1-111,Ivermectin,TH1
+PLT-TH1-112,Favipiravir,TH1
+PLT-TH1-113,Regeneron,TH1
+PLT-TH1-114,Regeneron,TH1
+PLT-TH1-115,No study drug,TH1
+PLT-TH1-116,Ivermectin,TH1
+PLT-TH1-117,Remdesivir,TH1
+PLT-TH1-118,Favipiravir,TH1
+PLT-TH1-119,Remdesivir,TH1
+PLT-TH1-120,No study drug,TH1
+PLT-TH1-121,Regeneron,TH1
+PLT-TH1-122,Favipiravir,TH1
+PLT-TH1-123,Ivermectin,TH1
+PLT-TH1-124,Ivermectin,TH1
+PLT-TH1-125,Remdesivir,TH1
+PLT-TH1-126,Remdesivir,TH1
+PLT-TH1-127,Remdesivir,TH1
+PLT-TH1-128,No study drug,TH1
+PLT-TH1-129,No study drug,TH1
+PLT-TH1-130,Regeneron,TH1
+PLT-TH1-131,Remdesivir,TH1
+PLT-TH1-132,Favipiravir,TH1
+PLT-TH1-133,Ivermectin,TH1
+PLT-TH1-134,Ivermectin,TH1
+PLT-TH1-135,Favipiravir,TH1
+PLT-TH1-136,Remdesivir,TH1
+PLT-TH1-137,No study drug,TH1
+PLT-TH1-138,Regeneron,TH1
+PLT-TH1-139,Ivermectin,TH1
+PLT-TH1-140,Regeneron,TH1
+PLT-TH1-141,No study drug,TH1
+PLT-TH1-142,No study drug,TH1
+PLT-TH1-143,Remdesivir,TH1
+PLT-TH1-144,No study drug,TH1
+PLT-TH1-145,Favipiravir,TH1
+PLT-TH1-146,Favipiravir,TH1
+PLT-TH1-147,Regeneron,TH1
+PLT-TH1-148,Regeneron,TH1
+PLT-TH1-149,Ivermectin,TH1
+PLT-TH1-150,Remdesivir,TH1
+PLT-TH1-151,Favipiravir,TH1
+PLT-TH1-152,Regeneron,TH1
+PLT-TH1-153,Remdesivir,TH1
+PLT-TH1-154,Remdesivir,TH1
+PLT-TH1-155,Favipiravir,TH1
+PLT-TH1-156,No study drug,TH1
+PLT-TH1-157,Ivermectin,TH1
+PLT-TH1-158,No study drug,TH1
+PLT-TH1-159,Ivermectin,TH1
+PLT-TH1-160,Ivermectin,TH1
+PLT-TH1-161,Ivermectin,TH1
+PLT-TH1-162,No study drug,TH1
+PLT-TH1-163,Regeneron,TH1
+PLT-TH1-164,Favipiravir,TH1
+PLT-TH1-165,Ivermectin,TH1
+PLT-TH1-166,Favipiravir,TH1
+PLT-TH1-167,Favipiravir,TH1
+PLT-TH1-168,No study drug,TH1
+PLT-TH1-169,Regeneron,TH1
+PLT-TH1-170,Remdesivir,TH1
+PLT-TH1-171,Favipiravir,TH1
+PLT-TH1-172,Favipiravir,TH1
+PLT-TH1-173,Ivermectin,TH1
+PLT-TH1-174,Regeneron,TH1
+PLT-TH1-175,No study drug,TH1
+PLT-TH1-176,Ivermectin,TH1
+PLT-TH1-177,Remdesivir,TH1
+PLT-TH1-178,Remdesivir,TH1
+PLT-TH1-179,No study drug,TH1
+PLT-TH1-180,Ivermectin,TH1
+PLT-TH1-181,Favipiravir,TH1
+PLT-TH1-182,Regeneron,TH1
+PLT-TH1-183,Ivermectin,TH1
+PLT-TH1-184,Regeneron,TH1
+PLT-TH1-185,No study drug,TH1
+PLT-TH1-186,Favipiravir,TH1
+PLT-TH1-187,No study drug,TH1
+PLT-TH1-188,No study drug,TH1
+PLT-TH1-189,Ivermectin,TH1
+PLT-TH1-190,Fluoxetine,TH1
+PLT-TH1-191,Ivermectin,TH1
+PLT-TH1-192,Remdesivir,TH1
+PLT-TH1-193,Fluoxetine,TH1
+PLT-TH1-194,Remdesivir,TH1
+PLT-TH1-195,Ivermectin,TH1
+PLT-TH1-196,Regeneron,TH1
+PLT-TH1-197,Favipiravir,TH1
+PLT-TH1-198,Favipiravir,TH1
+PLT-TH1-199,Remdesivir,TH1
+PLT-TH1-200,Remdesivir,TH1
+PLT-TH1-201,Regeneron,TH1
+PLT-TH1-202,No study drug,TH1
+PLT-TH1-203,Fluoxetine,TH1
+PLT-TH1-204,Regeneron,TH1
+PLT-TH1-205,No study drug,TH1
+PLT-TH1-206,Regeneron,TH1
+PLT-TH1-207,Remdesivir,TH1
+PLT-TH1-208,Remdesivir,TH1
+PLT-TH1-209,Regeneron,TH1
+PLT-TH1-210,Fluoxetine,TH1
+PLT-TH1-211,Fluoxetine,TH1
+PLT-TH1-212,Favipiravir,TH1
+PLT-TH1-213,Favipiravir,TH1
+PLT-TH1-214,Remdesivir,TH1
+PLT-TH1-215,No study drug,TH1
+PLT-TH1-216,Remdesivir,TH1
+PLT-TH1-217,Regeneron,TH1
+PLT-TH1-218,Favipiravir,TH1
+PLT-TH1-219,Fluoxetine,TH1
+PLT-TH1-220,No study drug,TH1
+PLT-TH1-221,Fluoxetine,TH1
+PLT-TH1-222,Favipiravir,TH1
+PLT-TH1-223,No study drug,TH1
+PLT-TH1-224,Favipiravir,TH1
+PLT-TH1-225,Regeneron,TH1
+PLT-TH1-226,No study drug,TH1
+PLT-TH1-227,Regeneron,TH1
+PLT-TH1-228,Regeneron,TH1
+PLT-TH1-229,Fluoxetine,TH1
+PLT-TH1-230,No study drug,TH1
+PLT-TH1-231,Remdesivir,TH1
+PLT-TH1-232,Remdesivir,TH1
+PLT-TH1-233,Fluoxetine,TH1
+PLT-TH1-234,Favipiravir,TH1
+PLT-TH1-235,Favipiravir,TH1
+PLT-TH1-236,Favipiravir,TH1
+PLT-TH1-237,Fluoxetine,TH1
+PLT-TH1-238,Fluoxetine,TH1
+PLT-TH1-239,Fluoxetine,TH1
+PLT-TH1-240,Remdesivir,TH1
+PLT-TH1-241,No study drug,TH1
+PLT-TH1-242,Regeneron,TH1
+PLT-TH1-243,No study drug,TH1
+PLT-TH1-244,Regeneron,TH1
+PLT-TH1-245,Favipiravir,TH1
+PLT-TH1-246,Fluoxetine,TH1
+PLT-TH1-247,Remdesivir,TH1
+PLT-TH1-248,Regeneron,TH1
+PLT-TH1-249,Remdesivir,TH1
+PLT-TH1-250,No study drug,TH1
+PLT-TH1-251,Favipiravir,TH1
+PLT-TH1-252,Fluoxetine,TH1
+PLT-TH1-253,No study drug,TH1
+PLT-TH1-254,No study drug,TH1
+PLT-TH1-255,Regeneron,TH1
+PLT-TH1-256,Favipiravir,TH1
+PLT-TH1-257,Favipiravir,TH1
+PLT-TH1-258,Remdesivir,TH1
+PLT-TH1-259,No study drug,TH1
+PLT-TH1-260,Fluoxetine,TH1
+PLT-TH1-261,Remdesivir,TH1
+PLT-TH1-262,Remdesivir,TH1
+PLT-TH1-263,Regeneron,TH1
+PLT-TH1-264,Regeneron,TH1
+PLT-TH1-265,No study drug,TH1
+PLT-TH1-266,Fluoxetine,TH1
+PLT-TH1-267,Regeneron,TH1
+PLT-TH1-268,Remdesivir,TH1
+PLT-TH1-269,No study drug,TH1
+PLT-TH1-270,No study drug,TH1
+PLT-TH1-271,Fluoxetine,TH1
+PLT-TH1-272,Favipiravir,TH1
+PLT-TH1-273,Molnupiravir,TH1
+PLT-TH1-274,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-275,No study drug,TH1
+PLT-TH1-276,Molnupiravir,TH1
+PLT-TH1-277,Favipiravir,TH1
+PLT-TH1-278,Fluoxetine,TH1
+PLT-TH1-279,Regeneron,TH1
+PLT-TH1-280,No study drug,TH1
+PLT-TH1-281,Favipiravir,TH1
+PLT-TH1-282,No study drug,TH1
+PLT-TH1-283,No study drug,TH1
+PLT-TH1-284,Favipiravir,TH1
+PLT-TH1-285,Fluoxetine,TH1
+PLT-TH1-286,Regeneron,TH1
+PLT-TH1-287,Fluoxetine,TH1
+PLT-TH1-288,Favipiravir,TH1
+PLT-TH1-289,No study drug,TH1
+PLT-TH1-290,Fluoxetine,TH1
+PLT-TH1-291,No study drug,TH1
+PLT-TH1-292,Molnupiravir,TH1
+PLT-TH1-293,Molnupiravir,TH1
+PLT-TH1-294,Regeneron,TH1
+PLT-TH1-295,Regeneron,TH1
+PLT-TH1-296,No study drug,TH1
+PLT-TH1-297,Regeneron,TH1
+PLT-TH1-298,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-299,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-300,No study drug,TH1
+PLT-TH1-301,Molnupiravir,TH1
+PLT-TH1-302,Fluoxetine,TH1
+PLT-TH1-303,Favipiravir,TH1
+PLT-TH1-304,Molnupiravir,TH1
+PLT-TH1-305,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-306,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-307,Molnupiravir,TH1
+PLT-TH1-308,Fluoxetine,TH1
+PLT-TH1-309,Regeneron,TH1
+PLT-TH1-310,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-311,Regeneron,TH1
+PLT-TH1-312,Favipiravir,TH1
+PLT-TH1-313,Fluoxetine,TH1
+PLT-TH1-314,Regeneron,TH1
+PLT-TH1-315,No study drug,TH1
+PLT-TH1-316,Regeneron,TH1
+PLT-TH1-317,No study drug,TH1
+PLT-TH1-318,Fluoxetine,TH1
+PLT-TH1-319,Fluoxetine,TH1
+PLT-TH1-320,Molnupiravir,TH1
+PLT-TH1-321,Favipiravir,TH1
+PLT-TH1-322,No study drug,TH1
+PLT-TH1-323,Favipiravir,TH1
+PLT-TH1-324,No study drug,TH1
+PLT-TH1-325,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-326,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-327,Molnupiravir,TH1
+PLT-TH1-328,Favipiravir,TH1
+PLT-TH1-329,Regeneron,TH1
+PLT-TH1-330,Molnupiravir,TH1
+PLT-TH1-331,No study drug,TH1
+PLT-TH1-332,Fluoxetine,TH1
+PLT-TH1-333,Favipiravir,TH1
+PLT-TH1-334,No study drug,TH1
+PLT-TH1-335,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-336,Molnupiravir,TH1
+PLT-TH1-337,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-338,No study drug,TH1
+PLT-TH1-339,Fluoxetine,TH1
+PLT-TH1-340,Molnupiravir,TH1
+PLT-TH1-341,Fluoxetine,TH1
+PLT-TH1-342,Favipiravir,TH1
+PLT-TH1-343,Molnupiravir,TH1
+PLT-TH1-344,No study drug,TH1
+PLT-TH1-345,No study drug,TH1
+PLT-TH1-346,Fluoxetine,TH1
+PLT-TH1-347,No study drug,TH1
+PLT-TH1-348,Regeneron,TH1
+PLT-TH1-349,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-350,Regeneron,TH1
+PLT-TH1-351,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-352,Favipiravir,TH1
+PLT-TH1-353,Favipiravir,TH1
+PLT-TH1-354,Favipiravir,TH1
+PLT-TH1-355,Regeneron,TH1
+PLT-TH1-356,Molnupiravir,TH1
+PLT-TH1-357,Molnupiravir,TH1
+PLT-TH1-358,Favipiravir,TH1
+PLT-TH1-359,Regeneron,TH1
+PLT-TH1-360,No study drug,TH1
+PLT-TH1-361,Favipiravir,TH1
+PLT-TH1-362,Favipiravir,TH1
+PLT-TH1-363,No study drug,TH1
+PLT-TH1-364,Favipiravir,TH1
+PLT-TH1-365,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-366,Molnupiravir,TH1
+PLT-TH1-367,No study drug,TH1
+PLT-TH1-368,Regeneron,TH1
+PLT-TH1-369,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-370,Fluoxetine,TH1
+PLT-TH1-371,Favipiravir,TH1
+PLT-TH1-372,Fluoxetine,TH1
+PLT-TH1-373,Fluoxetine,TH1
+PLT-TH1-374,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-375,Regeneron,TH1
+PLT-TH1-376,No study drug,TH1
+PLT-TH1-377,Regeneron,TH1
+PLT-TH1-378,No study drug,TH1
+PLT-TH1-379,Molnupiravir,TH1
+PLT-TH1-380,Molnupiravir,TH1
+PLT-TH1-381,Fluoxetine,TH1
+PLT-TH1-382,Molnupiravir,TH1
+PLT-TH1-383,Fluoxetine,TH1
+PLT-TH1-384,No study drug,TH1
+PLT-TH1-385,Favipiravir,TH1
+PLT-TH1-386,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-387,Molnupiravir,TH1
+PLT-TH1-388,No study drug,TH1
+PLT-TH1-389,No study drug,TH1
+PLT-TH1-390,Regeneron,TH1
+PLT-TH1-391,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-392,Fluoxetine,TH1
+PLT-TH1-393,Favipiravir,TH1
+PLT-TH1-394,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-395,Molnupiravir,TH1
+PLT-TH1-396,Molnupiravir,TH1
+PLT-TH1-397,Regeneron,TH1
+PLT-TH1-398,No study drug,TH1
+PLT-TH1-399,No study drug,TH1
+PLT-TH1-400,Fluoxetine,TH1
+PLT-TH1-401,Regeneron,TH1
+PLT-TH1-402,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-403,Favipiravir,TH1
+PLT-TH1-404,Fluoxetine,TH1
+PLT-TH1-405,Favipiravir,TH1
+PLT-TH1-406,Fluoxetine,TH1
+PLT-TH1-407,Molnupiravir,TH1
+PLT-TH1-408,Favipiravir,TH1
+PLT-TH1-409,No study drug,TH1
+PLT-TH1-410,Nirmatrelvir + Ritonavir,TH1
+PLT-TH1-411,No study drug,TH1
+PLT-TH1-412,Favipiravir,TH1
+PLT-TH1-413,Regeneron,TH1
+PLT-TH58-001,Regeneron,TH58
+PLT-TH58-002,No study drug,TH58
+PLT-TH58-003,Regeneron,TH58
+PLT-TH58-004,No study drug,TH58
+PLT-TH58-005,Remdesivir,TH58
+PLT-TH58-006,Ivermectin,TH58
+PLT-TH58-007,Regeneron,TH58
+PLT-TH58-008,Ivermectin,TH58
+PLT-TH58-009,Remdesivir,TH58
+PLT-TH57-001,Ivermectin,TH57
+PLT-TH57-002,No study drug,TH57
+PLT-TH57-003,Ivermectin,TH57
+PLT-TH57-004,Favipiravir,TH57
+PLT-TH57-005,Regeneron,TH57
+PLT-TH57-006,Favipiravir,TH57
+PLT-TH57-007,Remdesivir,TH57
+PLT-TH57-008,Remdesivir,TH57
+PLT-TH57-009,No study drug,TH57
+PLT-TH57-010,No study drug,TH57
+PLT-BR3-001,Favipiravir,BR3
+PLT-BR3-002,No study drug,BR3
+PLT-BR3-003,Remdesivir,BR3
+PLT-BR3-004,No study drug,BR3
+PLT-BR3-005,Favipiravir,BR3
+PLT-BR3-006,Nitazoxanide,BR3
+PLT-BR3-007,Favipiravir,BR3
+PLT-BR3-008,No study drug,BR3
+PLT-BR3-009,Favipiravir,BR3
+PLT-BR3-010,Nitazoxanide,BR3
+PLT-BR3-011,Nitazoxanide,BR3
+PLT-BR3-012,Remdesivir,BR3
+PLT-BR3-013,Remdesivir,BR3
+PLT-BR3-014,Favipiravir,BR3
+PLT-BR3-015,Favipiravir,BR3
+PLT-BR3-016,Remdesivir,BR3
+PLT-BR3-017,No study drug,BR3
+PLT-BR3-018,Nitazoxanide,BR3
+PLT-BR3-019,Remdesivir,BR3
+PLT-BR3-020,Nitazoxanide,BR3
+PLT-BR3-021,No study drug,BR3
+PLT-BR3-022,Remdesivir,BR3
+PLT-BR3-023,Favipiravir,BR3
+PLT-BR3-024,Nitazoxanide,BR3
+PLT-BR3-025,Favipiravir,BR3
+PLT-BR3-026,Remdesivir,BR3
+PLT-BR3-027,Remdesivir,BR3
+PLT-BR3-028,Favipiravir,BR3
+PLT-BR3-029,Favipiravir,BR3
+PLT-BR3-030,No study drug,BR3
+PLT-BR3-031,No study drug,BR3
+PLT-BR3-032,No study drug,BR3
+PLT-BR3-033,Nitazoxanide,BR3
+PLT-BR3-034,Nitazoxanide,BR3
+PLT-BR3-035,Remdesivir,BR3
+PLT-BR3-036,Favipiravir,BR3
+PLT-BR3-037,Favipiravir,BR3
