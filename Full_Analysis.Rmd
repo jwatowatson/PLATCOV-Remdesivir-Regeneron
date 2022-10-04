@@ -831,7 +831,27 @@ for(j in 1:nrow(trt_matrix)){
   lines(trt_matrix[j, c('2.5%','97.5%')], c(j,j))
   lines(trt_matrix[j, c('10%','90%')], c(j,j), lwd=3)
 }
+```
 
+
+## Slope fits
+
+```{r}
+i = which(model_settings$dataset=='Full'&model_settings$cov_matrices==2)
+load(paste0('Rout/model_fits_',i,'.RData'))
+slope_data = data.frame(slope = colMeans(extract(out, pars='slope')$slope),
+                        ID_stan = stan_inputs$Full$analysis_data_stan$id[stan_inputs$Full$analysis_data_stan$ind_start])
+slope_data = merge(slope_data, stan_inputs$Full$ID_map, by = 'ID_stan')
+temperature_clearance = read.csv('temperature_clearance.csv')
+temperature_clearance = merge(temperature_clearance,slope_data, 
+                              by.x = 'ID',by.y = 'ID_key')
+plat_summary = merge(plat_summary[!duplicated(plat_summary$ID),],
+                     temperature_clearance,by='ID')
+summary(lm(slope ~ Trt, data = plat_summary))
+
+ind = plat_summary$clearance_time>0
+plot(plat_summary$slope[ind], plat_summary$clearance_time[ind])
+cor.test(plat_summary$slope[ind], plat_summary$clearance_time[ind])
 ```
 
 

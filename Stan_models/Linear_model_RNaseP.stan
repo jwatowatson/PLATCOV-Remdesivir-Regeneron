@@ -83,7 +83,6 @@ transformed parameters {
   {
     vector[K_trt] trt_effect_prime;
     
-    
     trt_effect_prime = append_row(0, trt_effect);
     trt_slope = trt_mat * trt_effect_prime;
     

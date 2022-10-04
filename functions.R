@@ -288,20 +288,6 @@ make_baseline_table = function(input_data){
   return(xx)
 }
 
-get_rates_linear_mod = function(mod_out, # single model fit - not a list
-                                analysis_data_stan){
-  
-  # get the indices of first datapoint for each individual
-  ind_id = which(!duplicated(analysis_data_stan$id))
-  my_slopes = array(dim=length(ind_id))
-  thetas_pred = 
-    rstan::extract(mod_out,pars = 'pred_log10_vl')$pred_log10_vl
-  
-  
-  beta_0*exp(trt_slope[i]+theta_rand_id[id[i]][2]+beta_cov[i])
-  
-}
-
 plot_individ_data = function(mod_out, # model fits
                              models_plot, # which models to plot
                              K_plots,
@@ -492,4 +478,3 @@ checkStrict(plot_individ_data)
 checkStrict(make_baseline_table)
 checkStrict(plot_coef_effects)
 checkStrict(calculate_fever_clearance)
-checkStrict(get_rates_linear_mod)
