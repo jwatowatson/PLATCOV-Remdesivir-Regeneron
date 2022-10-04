@@ -86,7 +86,7 @@ plot_serial_data = function(xx, trt_cols){
            yticlab = '',ytics = 2, xtics = c(0,3,6,14),
            xlim = c(0,14), type='n', yaxt='n',
            col = trt_cols[PCR_dat$Trt],
-           ylim = c(1, max(PCR_dat$log10_viral_load)))
+           ylim = c(1, 8))
   axis(2, at = c(2,4,6,8), labels = c(expression(10^2),
                                       expression(10^4),
                                       expression(10^6),
@@ -293,12 +293,13 @@ get_rates_linear_mod = function(mod_out, # single model fit - not a list
   
   # get the indices of first datapoint for each individual
   ind_id = which(!duplicated(analysis_data_stan$id))
-  thetas = 
-    rstan::extract(mod_out, 
-                   pars = c('beta_0','beta_cov','theta_rand_id','trt_effect'))
-  beta_cov = x_slope*slope_coefs;
+  my_slopes = array(dim=length(ind_id))
+  thetas_pred = 
+    rstan::extract(mod_out,pars = 'pred_log10_vl')$pred_log10_vl
+  
   
   beta_0*exp(trt_slope[i]+theta_rand_id[id[i]][2]+beta_cov[i])
+  
 }
 
 plot_individ_data = function(mod_out, # model fits
@@ -437,6 +438,52 @@ checkStrict <- function(f, silent=FALSE) {
   !any(found)
 }
 
+calculate_fever_clearance = function(temp_dat,
+                                     window_clear = 24/24 # look ahead window to define "fever clearance"
+                                     ){
+  
+  if(!'temperature_ax' %in% colnames(temp_dat)) stop('needs to contain a temperature_ax column')
+  
+  temp_dat$clearance_time = NA
+  # For interval censored data, the status indicator is 0=right censored, 1=event at time, 2=left censored, 3=interval censored. 
+  temp_dat$clearance_time_cens = 1
+  
+  temp_dat$fever_binary = temp_dat$temperature_ax>37
+  temp_dat = dplyr::arrange(temp_dat, ID, Time) 
+  temp_dat = temp_dat[!is.na(temp_dat$temperature_ax), ]
+  
+  for(id in unique(temp_dat$ID)){
+    ind = temp_dat$ID==id
+    if(all(!temp_dat$fever_binary[ind])){ # never fever
+      temp_dat$clearance_time[ind]=0
+    } else if(all(temp_dat$fever_binary[ind])){ # always fever
+      writeLines(sprintf('all fever for %s with %s FUP points',id,sum(ind)))
+      temp_dat$clearance_time[ind] = max(temp_dat$Time[ind])
+      temp_dat$clearance_time_cens[ind] = 0 #censored obs
+    } else { # fever cleared
+      j_cleared = which(ind & !temp_dat$fever_binary)
+      check_ahead=F
+      for(j in j_cleared){
+        if(!check_ahead){
+          ind_check = 
+            which(ind & 
+                    temp_dat$Time>temp_dat$Time[j] &
+                    temp_dat$Time<temp_dat$Time[j] + window_clear)
+          if(length(ind_check)>0 & all(!temp_dat$fever_binary[ind_check])){
+            temp_dat$clearance_time[ind]=temp_dat$Time[j]
+            check_ahead=T
+          }
+        }
+      }
+      if(!check_ahead){
+        temp_dat$clearance_time[ind]=tail(temp_dat$Time[ind],1)
+        temp_dat$clearance_time_cens[ind]=0
+      }
+    }
+  }
+  
+  return(temp_dat)
+}
 
 checkStrict(make_stan_inputs)
 checkStrict(plot_serial_data)
@@ -444,3 +491,5 @@ checkStrict(plot_effect_estimates)
 checkStrict(plot_individ_data)
 checkStrict(make_baseline_table)
 checkStrict(plot_coef_effects)
+checkStrict(calculate_fever_clearance)
+checkStrict(get_rates_linear_mod)
