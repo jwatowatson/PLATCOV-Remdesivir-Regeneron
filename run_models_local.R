@@ -6,7 +6,7 @@ library(doParallel)
 load('Rout/model_run_setup.RData')
 
 
-for(i in 6:9){
+for(i in 1:length(model_settings)){
   
   writeLines('Doing the following job:')
   print(model_settings[i, ])
