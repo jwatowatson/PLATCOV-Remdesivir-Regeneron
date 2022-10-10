@@ -293,6 +293,8 @@ for(vv in unique(platcov_dat$Variant[platcov_dat$Variant!='BA.4'])){
 
 ## Simple model using brms
 
+Did this as a sanity check for handwritten models... basically gives the same results
+
 ```{r}
 # ind_fit = platcov_dat$Timepoint_ID<14
 # platcov_dat$CT_RNaseP_scaled = scale(platcov_dat$CT_RNaseP)
