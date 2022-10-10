@@ -1,5 +1,7 @@
 # PLATCOV-Remdesivir-Regeneron
- 
+
+``Clinical antiviral efficacy of remdesivir and casirivimab/imdevimab against the SARS-CoV-2 Delta and Omicron variants''
+
 This repository provides code and data for the analysis of the casirivimab/imdevimab (Regeneron monoclonal antibody) and remdesivir arms of the PLATCOV trial.
 
 The repository is structured as follows:
