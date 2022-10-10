@@ -221,7 +221,7 @@ legend('left',col=1, pch=c(16,1),legend = c('Genotyped','Imputed\n(based on date
 Summary table
 
 ```{r table1}
-plat_summary = aggregate(log10_viral_load ~ ID+Timepoint_ID+Trt+Age+Variant+Rand_date+Weight+Sex+Symptom_onset+Site,
+plat_summary = aggregate(log10_viral_load ~ ID+Timepoint_ID+Trt+Age+Variant+Rand_date+Weight+Sex+Symptom_onset+Site+N_dose+Antibody_test,
                          data = platcov_dat, mean)
 plat_summary = dplyr::arrange(plat_summary, Site, ID, Rand_date)
 write.csv(plat_summary, file = '~/Downloads/platcov_regeneron_remdesivir.csv',quote = F,row.names = F)
@@ -358,21 +358,7 @@ source('priors.R')
 
 We make the stan data sets.
 
-```{r}
-platcov_dat_list = list()
-platcov_dat_list[[1]]=platcov_dat[platcov_dat$Remdesivir_analysis,] # Remdesivir 
-
-platcov_dat_list[[2]]=platcov_dat[platcov_dat$Regeneron_analysis,] # all Regeneron 
-
-platcov_dat_list[[3]]=platcov_dat[platcov_dat$Rand_date < '2022-06-11' &
-                                    platcov_dat$Site!='br003',] # thai sites where could be randomised to remdesivir or regen-cov 
-
-platcov_dat_list[[4]]=platcov_dat[platcov_dat$Regeneron_analysis,] # Regeneron Subgroup analysis based on major Greek Lineage
-platcov_dat_list[[5]]=platcov_dat[platcov_dat$Regeneron_analysis,] # Regeneron Subgroup analysis based on G446S mutations
-platcov_dat_list[[6]]=platcov_dat[platcov_dat$Regeneron_analysis & platcov_dat$Variant!='BA.4',] # Regeneron Subgroup analysis based on Omicron sublineages
-
-platcov_dat_list[[7]]=platcov_dat # everything
-
+```{r make_datasets}
 analysis_datasets = 
   c('Remdesivir',
     'Regeneron',
@@ -382,44 +368,74 @@ analysis_datasets =
     'Subgroup_Sublineages',
     'Full')
 
-trt_list = list()
-trt_list[[1]] = c("No study drug", 'Remdesivir')
-trt_list[[2]] = c("No study drug", 'Casirivimab\nimdevimab')
-trt_list[[3]] = c("No study drug", 'Remdesivir',
+
+platcov_dat_list = vector(mode = 'list',length =  length(analysis_datasets)); 
+names(platcov_dat_list) = analysis_datasets
+platcov_dat_list[['Remdesivir']]=
+  platcov_dat[platcov_dat$Remdesivir_analysis,] # Remdesivir 
+
+platcov_dat_list[['Regeneron']]=
+  platcov_dat[platcov_dat$Regeneron_analysis,] # all Regeneron 
+
+platcov_dat_list[['REGN_Remdesivir_contemporaneous']]=
+  platcov_dat[platcov_dat$Rand_date < '2022-06-11' &
+                platcov_dat$Site!='br003',] # thai sites where could be randomised to remdesivir or regen-cov 
+
+platcov_dat_list[['Subgroup_Greek']]=
+  platcov_dat[platcov_dat$Regeneron_analysis,] # Regeneron Subgroup analysis based on major Greek Lineage
+platcov_dat_list[['Subgroup_G446S']]=
+  platcov_dat[platcov_dat$Regeneron_analysis,] # Regeneron Subgroup analysis based on G446S mutations
+platcov_dat_list[['Subgroup_Sublineages']]=
+  platcov_dat[platcov_dat$Regeneron_analysis & platcov_dat$Variant!='BA.4',] # Regeneron Subgroup analysis based on Omicron sublineages
+
+platcov_dat_list[['Full']]=platcov_dat # everything
+
+
+trt_list = vector(mode = 'list',length =  length(analysis_datasets)); 
+names(trt_list) = analysis_datasets
+trt_list[['Remdesivir']] = c("No study drug", 'Remdesivir')
+trt_list[['Regeneron']] = c("No study drug", 'Casirivimab\nimdevimab')
+trt_list[['REGN_Remdesivir_contemporaneous']] = c("No study drug", 'Remdesivir',
                   'Casirivimab\nimdevimab')
-trt_list[[4]] = c("No study drug", 'Casirivimab\nimdevimab')
-trt_list[[5]] = c("No study drug", 'Casirivimab\nimdevimab')
-trt_list[[6]] = c("No study drug", 'Casirivimab\nimdevimab')
-trt_list[[7]] = c("No study drug", 'Remdesivir',
+trt_list[['Subgroup_Greek']] = c("No study drug", 'Casirivimab\nimdevimab')
+trt_list[['Subgroup_G446S']] = c("No study drug", 'Casirivimab\nimdevimab')
+trt_list[['Subgroup_Sublineages']] = c("No study drug", 'Casirivimab\nimdevimab')
+trt_list[['Full']] = c("No study drug", 'Remdesivir',
                   'Casirivimab\nimdevimab')
 
-for(i in 1:length(platcov_dat_list)){
+for(dd in analysis_datasets){
   writeLines(sprintf('In %s there are %s PCR datapoints and %s patients',
-                     analysis_datasets[i],
-                     nrow(platcov_dat_list[[i]]),
-                     length(unique(platcov_dat_list[[i]]$ID))))
+                     dd,
+                     nrow(platcov_dat_list[[dd]]),
+                     length(unique(platcov_dat_list[[dd]]$ID))))
   ## re-arrange so that censored values come last
-  platcov_dat_list[[i]] = 
-    dplyr::arrange(platcov_dat_list[[i]],
+  platcov_dat_list[[dd]] = 
+    dplyr::arrange(platcov_dat_list[[dd]],
                    log10_viral_load==log10_cens_vl)
   
   # any missing timepoints or negative timepoints replace with protocol time
-  ind_change_time = is.na(platcov_dat_list[[i]]$Time) | platcov_dat_list[[i]]$Time <0
+  ind_change_time = is.na(platcov_dat_list[[dd]]$Time) | platcov_dat_list[[dd]]$Time <0
   
-  platcov_dat_list[[i]]$Time[ind_change_time] =
-    platcov_dat_list[[i]]$Timepoint_ID[ind_change_time]
+  platcov_dat_list[[dd]]$Time[ind_change_time] =
+    platcov_dat_list[[dd]]$Timepoint_ID[ind_change_time]
   # Datapoints that will be used in the analysis
-  ind = platcov_dat_list[[i]]$Time < Dmax & 
-    platcov_dat_list[[i]]$Per_protocol_sample==1 &
-    platcov_dat_list[[i]]$ID %in% PP$ID[PP$Include_mITT]
+  ind = platcov_dat_list[[dd]]$Time < Dmax & 
+    platcov_dat_list[[dd]]$Per_protocol_sample==1 &
+    platcov_dat_list[[dd]]$ID %in% PP$ID[PP$Include_mITT]
   
-  platcov_dat_list[[i]]$Trt = factor(platcov_dat_list[[i]]$Trt, 
-                                     levels = trt_list[[i]])
+  platcov_dat_list[[dd]]$Trt = factor(platcov_dat_list[[dd]]$Trt, 
+                                     levels = trt_list[[dd]])
   
-  platcov_dat_list[[i]] = platcov_dat_list[[i]][ind, ]
+  platcov_dat_list[[dd]]$Variant = factor(platcov_dat_list[[dd]]$Variant, 
+                                         levels = c('Delta','BA.1','BA.2','BA.4','BA.5'))
+  
+  platcov_dat_list[[dd]]$Site = factor(platcov_dat_list[[dd]]$Site, 
+                                      levels = c('th001','th057','th058','br003'))
+  
+  platcov_dat_list[[dd]] = platcov_dat_list[[dd]][ind, ]
   writeLines(sprintf('Analysis dataset contains %s patients and %s datapoints',
-                     length(unique(platcov_dat_list[[i]]$ID)),
-                     nrow(platcov_dat_list[[i]])))
+                     length(unique(platcov_dat_list[[dd]]$ID)),
+                     nrow(platcov_dat_list[[dd]])))
 }
 
 names(platcov_dat_list) = analysis_datasets
@@ -429,11 +445,12 @@ names(platcov_dat_list) = analysis_datasets
 ```{r make_stan_datasets}
 covs_base = c('Variant','Site')
 covs_full=c(covs_base, 'Age_scaled','Symptom_onset')
-stan_inputs = list()
+stan_inputs = vector(mode = 'list',length =  length(analysis_datasets)); 
+names(stan_inputs) = analysis_datasets
 
-for(i in 1:length(platcov_dat_list)){
-  stan_inputs[[i]] = 
-    make_stan_inputs(input_data_fit = platcov_dat_list[[i]],
+for(dd in analysis_datasets){
+  stan_inputs[[dd]] = 
+    make_stan_inputs(input_data_fit = platcov_dat_list[[dd]],
                      int_covs_base = covs_base,
                      int_covs_full = covs_full,
                      slope_covs_base = covs_base,
@@ -441,7 +458,6 @@ for(i in 1:length(platcov_dat_list)){
                      trt_frmla = formula('~ Trt'),
                      Dmax = Dmax)
 }
-names(stan_inputs) = analysis_datasets
 
 stan_inputs$REGN_Remdesivir_contemporaneous$Trt_matrix = 
   cbind(stan_inputs$REGN_Remdesivir_contemporaneous$Trt_matrix,
@@ -546,11 +562,16 @@ main models
 main_mods = model_settings$prior==1&
   model_settings$cov_matrices==1&
   model_settings$mod==all_mods[2]
+
+model_cols = brewer.pal(n = 5, name = 'Dark2')
+names(model_cols) = paste('model', 1:5)
 ```
 
 ## Remdesivir
 
-```{r remdesivir_out}
+Plot the remdesivir versus no study drug output
+
+```{r remdesivir_only_analysis}
 all_res_rems = which(model_settings$dataset=='Remdesivir')
 all_res_rems_main = which(model_settings$dataset=='Remdesivir' & main_mods)
 effect_ests_rems=list()
@@ -563,15 +584,36 @@ par(las=1, mar=c(5,10,2,2))
 plot_effect_estimates(effect_ests = effect_ests_rems,
                       plot_models = 1:length(effect_ests_rems),
                       study_threshold = study_threshold,
+                      mod_cols = model_cols,
                       my_pch = as.numeric(model_settings$mod[all_res_rems]==all_mods[3])+15
 )
-legend('topright',pch=15:16,legend = c('Linear','Non-linear'))
+legend('topright',pch=15:16,legend = c('Linear','Non-linear'),inset=0.03)
+legend('bottomright',lwd=3,legend = names(model_cols), col = model_cols,inset=0.03)
+
+load(paste0('Rout/model_fits_',all_res_rems_main,'.RData'))
+round(100*(exp(quantile(extract(out, pars = 'trt_effect')$trt_effect, probs = my_probs))-1))
+
+xx=make_slopes_plot(stan_out = out, 
+                    analysis_data_stan = stan_inputs$Remdesivir$analysis_data_stan,
+                    ID_map = stan_inputs$Remdesivir$ID_map,
+                    data_summary = plat_summary[!duplicated(plat_summary$ID),],
+                    trt_cols = trt_cols,
+                    my_lims = c(2,50),
+                    my_vals = c(5,15,25,35,45))
+
+
+load(paste0('Rout/model_fits_',all_res_rems_main,'.RData'))
+par(las=1, mfrow=c(1,2), mar=c(5,7,2,2))
+plot_coef_effects(stan_out = out,cov_mat = 1,
+                  stan_inputs = stan_inputs$Remdesivir)
 ```
 
 
 ## Regeneron
 
-```{r}
+Same effect in all variants assumed
+
+```{r regeneron_only_main}
 all_res_regn = which(model_settings$dataset=='Regeneron')
 all_res_regn_main = which(model_settings$dataset=='Regeneron' & main_mods)
 effect_ests_regn=list()
@@ -584,9 +626,29 @@ par(las=1, mar=c(5,10,2,2))
 plot_effect_estimates(effect_ests = effect_ests_regn,
                       plot_models = 1:length(effect_ests_regn),
                       study_threshold = study_threshold,
+                      mod_cols = model_cols,
                       my_pch = as.numeric(model_settings$mod[all_res_rems]==all_mods[3])+15
 )
-legend('topright',pch=15:16,legend = c('Linear','Non-linear'))
+legend('topright',pch=15:16,legend = c('Linear','Non-linear'),inset=0.03)
+legend('bottomright',lwd=3,legend = names(model_cols), col = model_cols,inset=0.03)
+
+load(paste0('Rout/model_fits_',all_res_regn_main,'.RData'))
+round(100*(exp(quantile(extract(out, pars = 'trt_effect')$trt_effect, probs = my_probs))-1))
+
+my_data_summary = plat_summary[!duplicated(plat_summary$ID),]
+my_data_summary$Trt[my_data_summary$Trt=='Regeneron']='Casirivimab\nimdevimab'
+xx=make_slopes_plot(stan_out = out, 
+                    analysis_data_stan = stan_inputs$Regeneron$analysis_data_stan,
+                    ID_map = stan_inputs$Regeneron$ID_map,
+                    data_summary = my_data_summary,
+                    trt_cols = trt_cols,
+                    my_lims = c(2,50),
+                    my_vals = c(5,15,25,35,45))
+
+load(paste0('Rout/model_fits_',all_res_regn_main,'.RData'))
+par(las=1, mfrow=c(1,2), mar=c(5,7,2,2))
+plot_coef_effects(stan_out = out,cov_mat = 1,
+                  stan_inputs = stan_inputs$Full)
 ```
 
 ## Both interventions together
@@ -599,62 +661,48 @@ all_res_main = which(model_settings$dataset=='REGN_Remdesivir_contemporaneous' &
 effect_ests_all=list()
 for(i in all_res){
   load(paste0('Rout/model_fits_',i,'.RData'))
-  effect_ests_all[[which(i==all_res)]] = summary(out, pars='trt_effect',use_cache=F,probs=my_probs)$summary[,c('2.5%','10%','50%','90%','97.5%'),drop=F]
-  rownames(effect_ests_all[[which(i==all_res)]])= c('Remdesivir',
-                                                    'Casirivimab\nimdevimab (Delta)',
-                                                    'Casirivimab\nimdevimab (Omicron)')
+  j = which(i==all_res)
+  effect_ests_all[[j]] = extract(out, pars='trt_effect')$trt_effect
+  effect_ests_all[[j]][,3] = rowSums(effect_ests_all[[j]][,2:3])
+  effect_ests_all[[j]] = t(apply(effect_ests_all[[j]], 2, quantile, probs=my_probs))                                                      
+  rownames(effect_ests_all[[j]])= c('Remdesivir',
+                                    'Casirivimab\nimdevimab (Delta)',
+                                    'Casirivimab\nimdevimab (Omicron)')
 }
-par(las=1, mar=c(5,10,2,2))
+par(las=1, mar=c(5,13,2,2))
 plot_effect_estimates(effect_ests = effect_ests_all,
                       plot_models = 1:length(effect_ests_all),
                       study_threshold = study_threshold,
+                      mod_cols = model_cols,
                       my_pch = as.numeric(model_settings$mod[all_res]==all_mods[3])+15
 )
-legend('topright',pch=15:16,legend = c('Linear','Non-linear'))
+legend('topright',pch=15:16,legend = c('Linear','Non-linear'),inset=0.03)
+legend('bottomright',lwd=3,legend = names(model_cols), col = model_cols,inset=0.03)
+
+load(paste0('Rout/model_fits_',all_res_main,'.RData'))
+round(100*(exp(quantile(extract(out, pars = 'trt_effect')$trt_effect, probs = my_probs))-1))
+
+xx=make_slopes_plot(stan_out = out, 
+                    analysis_data_stan = stan_inputs$REGN_Remdesivir_contemporaneous$analysis_data_stan,
+                    ID_map = stan_inputs$REGN_Remdesivir_contemporaneous$ID_map,
+                    data_summary = my_data_summary,
+                    trt_cols = trt_cols,
+                    my_lims = c(2,50),
+                    my_vals = c(5,15,25,35,45))
+
 ```
 
 
 ```{r full_analysis_contemp}
 load(paste0('Rout/model_fits_',all_res_main,'.RData'))
 thetas_all = extract(out,pars='trt_effect')$trt_effect
-
-trt_remdesivir = quantile(thetas_all[,1],probs = my_probs)
-trt_delta_regn = quantile(thetas_all[,2],probs = my_probs)
-trt_omicron_regn = 
-  quantile(rowSums(thetas_all[,2:3]),probs = my_probs)
-trt_matrix = rbind(trt_remdesivir, trt_delta_regn, trt_omicron_regn)
-rownames(trt_matrix) = c('Remdesivir',
-                         'Casirivimab\nimdevimab (Delta)',
-                         'Casirivimab\nimdevimab (Omicron)')
-par(las=1, mar=c(5, 11, 2, 2), family='serif',cex.lab=1.3, cex.axis=1.3, bty='n')
-plot(trt_matrix[,'50%'], 1:nrow(trt_matrix), 
-     panel.first=grid(nx = NA, ny = NULL),
-     xlab='Change in rate of clearance (%)', ylab='',xaxt='n',
-     xlim = range(trt_matrix, na.rm = T), yaxt='n', pch=16, cex=2)
-
-abline(v=log(c(0.8, 1, 1.25, 1.5, 2)), 
-       lty='dotted',  col='lightgray')
-axis(1, at = log(c(0.8, 1, 1.25, 1.5, 2)), 
-     labels = c(-20, 0, 25, 50, 100))
-axis(2, at = 1:nrow(trt_matrix), labels = rownames(trt_matrix), tick = F)
-
-
-polygon(c(-10, log(1.125), log(1.125), -10), c(-1,-1, 10, 10),col = adjustcolor('lightgrey',.4), border = NA)
-abline(v=0, lty=2, lwd=3)
-
-points(trt_matrix[,'50%'], 1:nrow(trt_matrix),pch=16,cex=2)
-for(j in 1:nrow(trt_matrix)){
-  lines(trt_matrix[j, c('2.5%','97.5%')], c(j,j))
-  lines(trt_matrix[j, c('10%','90%')], c(j,j), lwd=3)
-}
-
+writeLines('probability that remdesivir is less than REGN in Delta:')
 mean(thetas_all[,1] < thetas_all[,2])
+writeLines('probability that remdesivir is greater than REGN in Omicron:')
 mean(thetas_all[,1] > rowSums(thetas_all[,2:3]))
-
-plot(out,pars='slope_coefs')
 ```
 
-
+### All data combined
 
 ```{r everything}
 everything = which(model_settings$dataset=='Full')
@@ -662,121 +710,163 @@ everything_main = which(model_settings$dataset=='Full' & main_mods)
 effect_ests_everything=list()
 for(i in everything){
   load(paste0('Rout/model_fits_',i,'.RData'))
-  effect_ests_everything[[which(i==everything)]] = summary(out, pars='trt_effect',use_cache=F,probs=my_probs)$summary[,c('2.5%','10%','50%','90%','97.5%'),drop=F]
-  rownames(effect_ests_everything[[which(i==everything)]])=
+  j = which(i==everything)
+  effect_ests_everything[[j]] = extract(out, pars='trt_effect')$trt_effect
+  effect_ests_everything[[j]][,3] = rowSums(effect_ests_everything[[j]][,2:3])
+  effect_ests_everything[[j]] = t(apply(effect_ests_everything[[j]], 2,
+                                        quantile, probs=my_probs))      
+  
+  rownames(effect_ests_everything[[j]])=
     c('Remdesivir',
       'Casirivimab\nimdevimab (Delta)',
       'Casirivimab\nimdevimab (Omicron)')
 }
-par(las=1, mar=c(5,10,2,2))
+
+load(paste0('Rout/model_fits_',everything_main,'.RData'))
+thetas_trt = extract(out, pars='trt_effect')$trt_effect
+thetas_trt[,3] = rowSums(thetas_trt[,2:3])
+thetas_rank  = apply(thetas_trt,1,rank)
+rownames(thetas_rank) = c('Remdesivir',
+      'Casirivimab\nimdevimab (Delta)',
+      'Casirivimab\nimdevimab (Omicron)')
+
+writeLines('Ranking probabilities:')
+apply(thetas_rank,1, table)
+
+par(las=1, mar=c(5,13,2,2))
 plot_effect_estimates(effect_ests = effect_ests_everything,
                       plot_models = 1:length(effect_ests_everything),
                       study_threshold = study_threshold,
+                      mod_cols = model_cols,
                       my_pch = as.numeric(model_settings$mod[everything]==all_mods[3])+15
 )
-legend('topright',pch=15:16,legend = c('Linear','Non-linear'))
+legend('topright',pch=15:16,legend = c('Linear','Non-linear'),inset=0.03)
+legend('bottomright',lwd=3,legend = names(model_cols), col = model_cols,inset=0.03)
+
+load(paste0('Rout/model_fits_',everything_main,'.RData'))
+my_data_summary_greek = my_data_summary
+my_data_summary_greek$Trt[my_data_summary$Trt=='Casirivimab\nimdevimab'&
+                            my_data_summary$Variant=='Delta']='REGN (Delta)'
+my_data_summary_greek$Trt[my_data_summary$Trt=='Casirivimab\nimdevimab'&
+                            my_data_summary$Variant!='Delta']='REGN (Omicron)'
+
+my_data_summary_greek$Trt[my_data_summary$Trt=='No study drug'&
+                            my_data_summary$Variant=='Delta']='No study drug (Delta)'
+my_data_summary_greek$Trt[my_data_summary$Trt=='No study drug'&
+                            my_data_summary$Variant!='Delta']='No study drug (Omicron)'
+
+table(my_data_summary_greek$Trt)
+
+trt_cols_var = brewer.pal(n = 6, name = 'Set2')
+names(trt_cols_var) = unique(my_data_summary_greek$Trt)
+xx=make_slopes_plot(stan_out = out, 
+                    analysis_data_stan = stan_inputs$Full$analysis_data_stan,
+                    ID_map = stan_inputs$Full$ID_map,
+                    data_summary = my_data_summary_greek,
+                    trt_cols = trt_cols_var,
+                    my_lims = c(2,50),
+                    my_vals = c(5,15,25,35,45))
 ```
 
-```{r full_analysis}
-load(paste0('Rout/model_fits_',everything_main,'.RData'))
-thetas_all = extract(out,pars='trt_effect')$trt_effect
-
-trt_remdesivir = quantile(thetas_all[,1],probs = my_probs)
-trt_delta_regn = quantile(thetas_all[,2],probs = my_probs)
-trt_omicron_regn = 
-  quantile(rowSums(thetas_all[,2:3]),probs = my_probs)
-trt_matrix = rbind(trt_remdesivir, trt_delta_regn, trt_omicron_regn)
-rownames(trt_matrix) = c('Remdesivir',
-                         'Casirivimab\nimdevimab (Delta)',
-                         'Casirivimab\nimdevimab (Omicron)')
-par(las=1, mar=c(5, 11, 2, 2), family='serif',cex.lab=1.3, cex.axis=1.3, bty='n')
-plot(trt_matrix[,'50%'], 1:nrow(trt_matrix), 
-     panel.first=grid(nx = NA, ny = NULL),
-     xlab='Change in rate of clearance (%)', ylab='',xaxt='n',
-     xlim = range(trt_matrix, na.rm = T), yaxt='n', pch=16, cex=2)
-
-abline(v=log(c(0.8, 1, 1.25, 1.5, 2)), 
-       lty='dotted',  col='lightgray')
-axis(1, at = log(c(0.8, 1, 1.25, 1.5, 2)), 
-     labels = c(-20, 0, 25, 50, 100))
-axis(2, at = 1:nrow(trt_matrix), labels = rownames(trt_matrix), tick = F)
 
 
-polygon(c(-10, log(1.125), log(1.125), -10), c(-1,-1, 10, 10),col = adjustcolor('lightgrey',.4), border = NA)
-abline(v=0, lty=2, lwd=3)
+```{r everything_coef_plot, fig.height=7, fig.width=9}
+par(las=1, mfrow=c(1,2), mar=c(5,7,2,2))
+i=which(model_settings$dataset=='Full' & model_settings$cov_matrices==2)
+load(paste0('Rout/model_fits_',i,'.RData'))
+plot_coef_effects(stan_out = out,cov_mat = 2,
+                  stan_inputs = stan_inputs$Full)
 
-points(trt_matrix[,'50%'], 1:nrow(trt_matrix),pch=16,cex=2)
-for(j in 1:nrow(trt_matrix)){
-  lines(trt_matrix[j, c('2.5%','97.5%')], c(j,j))
-  lines(trt_matrix[j, c('10%','90%')], c(j,j), lwd=3)
-}
-
-mean(thetas_all[,1] < thetas_all[,2])
-mean(thetas_all[,1] > rowSums(thetas_all[,2:3]))
-
-plot(out,pars='slope_coefs')
 ```
 
 ## Regeneron subgroups
 ### Greek variant
 
-```{r}
+```{r greek_subgroup_analysis}
 Greek_res_mod = which(model_settings$dataset=='Subgroup_Greek')
 Greek_res_mod_main = which(model_settings$dataset=='Subgroup_Greek' & main_mods)
 effect_ests_greek=list()
 for(i in Greek_res_mod){
   load(paste0('Rout/model_fits_',i,'.RData'))
-  effect_ests_greek[[which(i==Greek_res_mod)]] = summary(out, pars='trt_effect',use_cache=F,probs=my_probs)$summary[,c('2.5%','10%','50%','90%','97.5%'),drop=F]
-  rownames(effect_ests_greek[[which(i==Greek_res_mod)]])=
-    c('Casirivimab\nimdevimab (overall)',
-      'Omicron vs Delta',
-      'Casirivimab\nimdevimab:Omicron')
+  j = which(i==Greek_res_mod)
+  effect_ests_greek[[j]] = extract(out, pars='trt_effect')$trt_effect
+  effect_ests_greek[[j]][,3] = rowSums(effect_ests_greek[[j]][,c(1,3)])
+  effect_ests_greek[[j]] = t(apply(effect_ests_greek[[j]], 2, quantile, probs=my_probs))[c(1,3), ]                                                      
+  rownames(effect_ests_greek[[j]])=
+    c('Casirivimab\nimdevimab (Delta)',
+      'Casirivimab\nimdevimab (Omicron)')
+  
 }
 par(las=1, mar=c(5,13,2,2))
 plot_effect_estimates(effect_ests = effect_ests_greek,
                       plot_models = 1:length(effect_ests_greek),
+                      mod_cols = model_cols,
                       study_threshold = study_threshold,
                       my_pch = as.numeric(model_settings$mod[all_res_rems]==all_mods[3])+15
 )
-legend('topright',pch=15:16,legend = c('Linear','Non-linear'))
+legend('topright',pch=15:16,legend = c('Linear','Non-linear'),inset=0.03)
+legend('right',lwd=3,legend = names(model_cols), 
+       col = model_cols,inset=0.03)
 
 load(paste0('Rout/model_fits_',Greek_res_mod_main,'.RData'))
-trt_names =colnames(stan_inputs$Subgroup_Greek$Trt_matrix)[-1]
-thetas_greek = extract(out,pars='trt_effect')$trt_effect
-colnames(thetas_greek)=trt_names
-trt_delta_regn = quantile(thetas_greek[,"TrtCasirivimab\nimdevimab"],probs = my_probs)
-trt_omicron_regn = 
-  quantile(rowSums(thetas_greek[,c("TrtCasirivimab\nimdevimab",
-                                   "TrtCasirivimab\nimdevimab:Greek_LineageOmicron")]),probs = my_probs)
+thetas_all = extract(out, pars='trt_effect')$trt_effect
+trt_delta_regn = quantile(thetas_all[,1],probs = my_probs)
+trt_omicron_regn =
+  quantile(rowSums(thetas_all[,c(1,3)]),probs = my_probs)
 
+my_data_summary_var = my_data_summary
+my_data_summary_var$Trt[my_data_summary$Trt=='Casirivimab\nimdevimab'&                          my_data_summary$Variant=='Delta']='Casirivimab\nimdevimab (Delta)'
+my_data_summary_var$Trt[my_data_summary$Trt=='Casirivimab\nimdevimab'&
+                          my_data_summary$Variant!='Delta']='Casirivimab\nimdevimab (Omicron)'
+my_data_summary_var$Trt[my_data_summary$Trt=='No study drug'&
+                          my_data_summary$Variant=='Delta']='No study drug (Delta)'
+my_data_summary_var$Trt[my_data_summary$Trt=='No study drug'&
+                          my_data_summary$Variant!='Delta']='No study drug (Omicron)'
+table(my_data_summary_var$Trt)
+trt_cols_var = brewer.pal(n = 6, name = 'Set2')
+names(trt_cols_var) = unique(my_data_summary_var$Trt)
+xx=make_slopes_plot(stan_out = out, 
+                    analysis_data_stan = stan_inputs$Subgroup_Greek$analysis_data_stan,
+                    ID_map = stan_inputs$Subgroup_Greek$ID_map,
+                    data_summary = my_data_summary_var,
+                    trt_cols = trt_cols_var,
+                    my_lims = c(2,50),
+                    my_vals = c(5,15,25,35,45))
 ```
 
 ### G446S mutation
 
-```{r}
+```{r g446s_subgroup_analysis}
 G446S_res_mod = which(model_settings$dataset=='Subgroup_G446S')
 G446S_res_mod_main = which(model_settings$dataset=='Subgroup_G446S' & main_mods)
 effect_ests_g446s=list()
 for(i in G446S_res_mod){
   load(paste0('Rout/model_fits_',i,'.RData'))
-  effect_ests_g446s[[which(i==G446S_res_mod)]] = summary(out, pars='trt_effect',use_cache=F,probs=my_probs)$summary[,c('mean','2.5%','10%','50%','90%','97.5%'),drop=F]
-  rownames(effect_ests_g446s[[which(i==G446S_res_mod)]])=
-    c('Casirivimab\nimdevimab (overall)',
-      'Omicron G446S',
-      'Omicron not G446S',
-      'Casirivimab\nimdevimab:\nOmicron G446S',
-      'Casirivimab\nimdevimab:\nnot Omicron G446S')
+  j = which(i==G446S_res_mod)
+  effect_ests_g446s[[j]] = extract(out, pars='trt_effect')$trt_effect
+  effect_ests_g446s[[j]][,4] = rowSums(effect_ests_g446s[[j]][,c(1,4)])
+  effect_ests_g446s[[j]][,5] = rowSums(effect_ests_g446s[[j]][,c(1,5)])
+  effect_ests_g446s[[j]] = t(apply(effect_ests_g446s[[j]], 2, quantile, probs=my_probs))[c(1,4,5), ]  
+  
+  rownames(effect_ests_g446s[[j]])=
+    c('Casirivimab\nimdevimab (Delta)',
+      'Casirivimab\nimdevimab\n(Omicron G446S)',
+      'Casirivimab\nimdevimab\n(Omicron not G446S)')
 }
 par(las=1, mar=c(5,13,2,2))
 plot_effect_estimates(effect_ests = effect_ests_g446s,
                       plot_models = 1:length(effect_ests_g446s),
                       study_threshold = study_threshold,
+                      mod_cols = model_cols,
                       my_pch = as.numeric(model_settings$mod[all_res_rems]==all_mods[3])+15
 )
-legend('topright',pch=15:16,legend = c('Linear','Non-linear'))
-
+legend('topright',pch=15:16,legend = c('Linear','Non-linear'), inset = 0.03)
+legend('right',lwd=3,legend = names(model_cols), 
+       col = model_cols,inset=0.03)
 
 load(paste0('Rout/model_fits_',G446S_res_mod_main,'.RData'))
+
+# make output for the main results plot
 trt_names =colnames(stan_inputs$Subgroup_G446S$Trt_matrix)[-1]
 thetas_g446s = extract(out,pars='trt_effect')$trt_effect
 colnames(thetas_g446s)=trt_names
@@ -787,12 +877,105 @@ trt_omicron_g446s_regn =
 trt_omicron_notg446s_regn = 
   quantile(rowSums(thetas_g446s[,c("TrtCasirivimab\nimdevimab",
                                    "TrtCasirivimab\nimdevimab:G446S_subgroupsOmicron_notG446S")]),probs = my_probs)
+
+
+# make the individual half life estimates plot
+my_data_summary_var = my_data_summary
+my_data_summary_var$Trt[my_data_summary$Trt=='Casirivimab\nimdevimab'&                          my_data_summary$Variant=='Delta']='Casirivimab\nimdevimab (Delta)'
+my_data_summary_var$Trt[my_data_summary$Trt=='Casirivimab\nimdevimab'&
+                          my_data_summary$Variant=='BA.1']='Casirivimab\nimdevimab (G446S)'
+my_data_summary_var$Trt[my_data_summary$Trt=='Casirivimab\nimdevimab'&
+                          my_data_summary$Variant%in%c('BA.2','BA.4','BA.5')]='Casirivimab\nimdevimab (not G446S)'
+
+my_data_summary_var$Trt[my_data_summary$Trt=='No study drug'&                          my_data_summary$Variant=='Delta']='No study drug (Delta)'
+my_data_summary_var$Trt[my_data_summary$Trt=='No study drug'&
+                          my_data_summary$Variant=='BA.1']='No study drug (G446S)'
+my_data_summary_var$Trt[my_data_summary$Trt=='No study drug'&
+                          my_data_summary$Variant%in%c('BA.2','BA.4','BA.5')]='No study drug (not G446S)'
+
+table(my_data_summary_var$Trt)
+
+trt_cols_var = brewer.pal(n = 7, name = 'Set2')
+names(trt_cols_var) = unique(my_data_summary_var$Trt)
+xx=make_slopes_plot(stan_out = out, 
+                    analysis_data_stan = stan_inputs$Subgroup_G446S$analysis_data_stan,
+                    ID_map = stan_inputs$Subgroup_G446S$ID_map,
+                    data_summary = my_data_summary_var,
+                    trt_cols = trt_cols_var,
+                    my_lims = c(2,50),
+                    my_vals = c(5,15,25,35,45))
+```
+
+
+## Sublineages subgroup analysis
+
+```{r sublineage_subgroup_analysis}
+Sublineage_mod = which(model_settings$dataset=='Subgroup_Sublineages')
+Sublineage_mod_main = which(model_settings$dataset=='Subgroup_Sublineages' & main_mods)
+effect_ests_sublineage=list()
+for(i in Sublineage_mod){
+  load(paste0('Rout/model_fits_',i,'.RData'))
+  j = which(i==Sublineage_mod)
+  effect_ests_sublineage[[j]] = extract(out, pars='trt_effect')$trt_effect[,c(1,6:7,9)]
+  effect_ests_sublineage[[j]][,2] = rowSums(effect_ests_sublineage[[j]][,c(1,2)])
+  effect_ests_sublineage[[j]][,3] = rowSums(effect_ests_sublineage[[j]][,c(1,3)])
+  effect_ests_sublineage[[j]][,4] = rowSums(effect_ests_sublineage[[j]][,c(1,4)])
+  effect_ests_sublineage[[j]] = t(apply(effect_ests_sublineage[[j]], 2, quantile, probs=my_probs))                                                      
+  rownames(effect_ests_sublineage[[j]])=
+    c('Casirivimab\nimdevimab (Delta)',
+      'Casirivimab\nimdevimab (BA.1)',
+      'Casirivimab\nimdevimab (BA.2)',
+      'Casirivimab\nimdevimab (BA.5)')
+  
+}
+par(las=1, mar=c(5,13,2,2))
+plot_effect_estimates(effect_ests = effect_ests_sublineage,
+                      plot_models = 1:length(effect_ests_sublineage),
+                      mod_cols = model_cols,
+                      study_threshold = study_threshold,
+                      my_pch = as.numeric(model_settings$mod[Sublineage_mod]==all_mods[3])+15
+)
+legend('topright',pch=15:16,legend = c('Linear','Non-linear'),inset=0.03)
+legend('right',lwd=3,legend = names(model_cols), 
+       col = model_cols,inset=0.03)
+
+load(paste0('Rout/model_fits_',Sublineage_mod_main,'.RData'))
+
+my_data_summary_var = my_data_summary
+my_data_summary_var$Trt[my_data_summary$Trt=='Casirivimab\nimdevimab'&
+                          my_data_summary$Variant=='Delta']='Casirivimab\nimdevimab (Delta)'
+my_data_summary_var$Trt[my_data_summary$Trt=='Casirivimab\nimdevimab'&
+                          my_data_summary$Variant=='BA.1']='Casirivimab\nimdevimab (BA.1)'
+my_data_summary_var$Trt[my_data_summary$Trt=='Casirivimab\nimdevimab'&
+                          my_data_summary$Variant=='BA.2']='Casirivimab\nimdevimab (BA.2)'
+my_data_summary_var$Trt[my_data_summary$Trt=='Casirivimab\nimdevimab'&
+                          my_data_summary$Variant=='BA.5']='Casirivimab\nimdevimab (BA.5)'
+
+my_data_summary_var$Trt[my_data_summary$Trt=='No study drug'&
+                          my_data_summary$Variant=='Delta']='No study drug (Delta)'
+my_data_summary_var$Trt[my_data_summary$Trt=='No study drug'&
+                          my_data_summary$Variant=='BA.1']='No study drug (BA.1)'
+my_data_summary_var$Trt[my_data_summary$Trt=='No study drug'&
+                          my_data_summary$Variant=='BA.2']='No study drug (BA.2)'
+my_data_summary_var$Trt[my_data_summary$Trt=='No study drug'&
+                          my_data_summary$Variant%in%c('BA.4','BA.5')]='No study drug (BA.5)'
+
+table(my_data_summary_var$Trt)
+trt_cols_var = brewer.pal(n = 9, name = 'Paired')
+names(trt_cols_var) = unique(my_data_summary_var$Trt)
+xx=make_slopes_plot(stan_out = out, 
+                    analysis_data_stan = stan_inputs$Subgroup_Sublineages$analysis_data_stan,
+                    ID_map = stan_inputs$Subgroup_Sublineages$ID_map,
+                    data_summary = my_data_summary_var,
+                    trt_cols = trt_cols_var,
+                    my_lims = c(2,50),
+                    my_vals = c(5,15,25,35,45))
 ```
 
 
 ### Make main figure
 
-```{r Main_Result}
+```{r Main_Result, fig.width=8, fig.height=6}
 trt_matrix = 
   rbind(effect_ests_rems[[which(all_res_rems_main==all_res_rems)]],
         effect_ests_regn[[which(all_res_regn_main==all_res_regn)]],
@@ -802,7 +985,7 @@ trt_matrix =
 rownames(trt_matrix) = c('All variants','All variants','Delta','Omicron',
                          'Delta','Omicron:\nG446S mutated',
                          'Omicron:\nnot G446S mutated')
-par(las=1, mar=c(5, 11, 2, 13), family='serif',cex.lab=1.3, cex.axis=1.3, bty='n')
+par(las=1, mar=c(5, 9, 2, 10), family='serif',cex.lab=1.1, cex.axis=1.1, bty='n')
 plot(trt_matrix[,'50%'], 1:nrow(trt_matrix), 
      panel.first=grid(nx = NA, ny = NULL),
      xlab='Change in rate of clearance (%)', ylab='',xaxt='n',
@@ -817,8 +1000,8 @@ axis(2, at = 1:nrow(trt_matrix), labels = rownames(trt_matrix), tick = F)
 axis(4, at = c(1,2,3.5,6), 
      labels = c('Remdesivir',
                 'Casirivimab/imdevimab',
-                'Casirivimab/imdevimab:\nPost hoc\nsubgroup analysis',
-                'Casirivimab/imdevimab:\nPre-specified\nsubgroup analysis'), tick = F)
+                'Casirivimab/imdevimab:\nPre-specified\nsubgroup analysis',
+                'Casirivimab/imdevimab:\nPost hoc\nsubgroup analysis'), tick = F)
 
 polygon(c(-10, log(1.125), log(1.125), -10), c(-1,-1, 10, 10),col = adjustcolor('lightgrey',.4), border = NA)
 abline(v=0, lty=2, lwd=3)
@@ -831,6 +1014,8 @@ for(j in 1:nrow(trt_matrix)){
   lines(trt_matrix[j, c('2.5%','97.5%')], c(j,j))
   lines(trt_matrix[j, c('10%','90%')], c(j,j), lwd=3)
 }
+
+print(round((exp(trt_matrix)-1)*100,0))
 ```
 
 
@@ -856,10 +1041,6 @@ cor.test(plat_summary$slope[ind], plat_summary$clearance_time[ind])
 
 
 
-## Covariate effects and variant effects
 
-```{r cov_effects}
-
-```
 
 

@@ -198,8 +198,9 @@ make_stan_inputs = function(input_data_fit,
   ind_cens = !input_data_fit$log10_viral_load>
     input_data_fit$log10_cens_vl
   
-  writeLines(sprintf('%s%% of samples are below LOD',
-                     round(100*mean(ind_cens),digits = 2)))
+  writeLines(sprintf('%s%% (%s out of %s) of samples are below LOD',
+                     round(100*mean(ind_cens),digits = 2),
+                     sum(ind_cens), length(ind_cens)))
   
   analysis_data_stan = list(Ntot = nrow(input_data_fit),
                             N_obs = sum(!ind_cens),
@@ -229,6 +230,63 @@ make_stan_inputs = function(input_data_fit,
   return(analysis_inputs)
 }
 
+
+make_slopes_plot = function(stan_out, 
+                            analysis_data_stan,
+                            ID_map, 
+                            data_summary,
+                            trt_cols,
+                            my_lims = c(5, 72), # hours
+                            my_vals = c(7,24,48,72)){
+  
+  slopes = extract(stan_out, pars='slope')$slope
+  thetas = extract(stan_out, pars='beta_0')
+  writeLines(sprintf('The model estimated population mean clearance half-life is %s (95%% CI %s-%s)',
+                     round(mean(24*log10(0.5)/thetas$beta_0),1),
+                     round(quantile(24*log10(0.5)/thetas$beta_0,.025),1),
+                     round(quantile(24*log10(0.5)/thetas$beta_0,.975),1)))
+  
+  t12_output = data.frame(t_12_med = 24*log10(.5)/(apply(slopes,2,mean)),
+                          t_12_up = 24*log10(.5)/(apply(slopes,2,quantile,.9)),
+                          t_12_low = 24*log10(.5)/(apply(slopes,2,quantile,.1)),
+                          ID_stan = analysis_data_stan$id[analysis_data_stan$ind_start])
+  t12_output = merge(t12_output, ID_map, by = 'ID_stan')
+  data_summary = merge(data_summary, t12_output, by.x = 'ID', by.y = 'ID_key')
+  
+  
+  data_summary = dplyr::arrange(data_summary, Trt, t_12_med)
+  
+  par(mar=c(5,2,2,2))
+  plot(data_summary$t_12_med, 1:nrow(data_summary),
+       col=trt_cols[data_summary$Trt], yaxt='n', xaxt='n',
+       xlim=my_lims, panel.first=grid(), xlab='', 
+       pch=15, ylab='')
+  mtext(text = expression('t'[1/2] ~ ' (hours)'),side = 1,line=3)
+  
+  axis(1, at = my_vals,labels = my_vals)
+  
+  
+  for(i in 1:nrow(data_summary)){
+    lines(c(data_summary$t_12_low[i],
+            data_summary$t_12_up[i]),
+          rep(i,2),col=trt_cols[data_summary$Trt[i]])
+  }
+  
+  for(trt in unique(data_summary$Trt)){
+    ind = data_summary$Trt==trt
+    writeLines(sprintf('In %s the median clearance half life was %s (range %s to %s)',
+                       trt,
+                       round(median(data_summary$t_12_med[ind]),1),
+                       round(min(data_summary$t_12_med[ind]),1),
+                       round(max(data_summary$t_12_med[ind]),1)))
+    abline(v = median(data_summary$t_12_med[ind]), col=trt_cols[trt],lty=2,lwd=2)
+  }
+  
+  legend('bottomright', legend = rev(unique(data_summary$Trt)),
+         col = trt_cols[rev(unique(data_summary$Trt))],
+         pch=15,lwd=2,inset=0.03)
+  return(data_summary)
+}
 
 make_baseline_table = function(input_data){
   
@@ -355,12 +413,11 @@ plot_individ_data = function(mod_out, # model fits
 }
 
 
-plot_coef_effects = function(stan_out, model_plot, cov_mat, stan_inputs){
+plot_coef_effects = function(stan_out, cov_mat, stan_inputs){
   
-  thetas = rstan::extract(stan_out[[model_plot]])
+  thetas = rstan::extract(stan_out)
   alpha_coefs = apply(thetas$intercept_coefs,2,
                       quantile,probs=c(0.025,.1,.5,.9,0.975))
-  xlims=range(alpha_coefs)
   
   cov_names_intercept =
     plyr::mapvalues(x = colnames(stan_inputs$cov_matrices$X_int[[cov_mat]]),
@@ -369,7 +426,7 @@ plot_coef_effects = function(stan_out, model_plot, cov_mat, stan_inputs){
                     to = c('Age','Serology RDT',
                            'Days since\nsymptom onset',
                            'Number of\nvaccine doses'))
-  
+  cov_names_intercept = gsub(x = cov_names_intercept, pattern = 'Variant',replacement = 'Subvariant ', ignore.case = F)
   cov_names_slope =
     plyr::mapvalues(x = colnames(stan_inputs$cov_matrices$X_slope[[cov_mat]]),
                     from = c('Age_scaled','Antibody_test',
@@ -377,10 +434,16 @@ plot_coef_effects = function(stan_out, model_plot, cov_mat, stan_inputs){
                     to = c('Age','Serology RDT',
                            'Days since\nsymptom onset',
                            'Number of\nvaccine doses'))
+  cov_names_slope = gsub(x = cov_names_slope, pattern = 'Variant',replacement = 'Subvariant ', ignore.case = F)
   
+  xlims=range(alpha_coefs)
+  x_points = axisTicks(xlims,log = T)
+  
+  colnames(alpha_coefs) = cov_names_intercept
+  print(round(exp(alpha_coefs),2))
   plot(alpha_coefs['50%', ], 1:ncol(alpha_coefs),
-       xlim=xlims,yaxt='n',ylab='',bty='n',xaxt='n',
-       panel.first=grid(), xlab='Intercept (fold change)')
+       xlim=range(log(x_points)),yaxt='n',ylab='',bty='n',xaxt='n',
+       panel.first=grid(), xlab='Intercept (fold change)',pch=16,cex=1.5)
   abline(v=0,lty=2,lwd=2)
   for(i in 1:ncol(alpha_coefs)){
     lines(c(alpha_coefs['10%',i], alpha_coefs['90%',i]),
@@ -388,17 +451,19 @@ plot_coef_effects = function(stan_out, model_plot, cov_mat, stan_inputs){
     lines(c(alpha_coefs['2.5%',i], alpha_coefs['97.5%',i]),
           c(i,i), lwd=1)
   }
-  axis(2, at =1:ncol(alpha_coefs), labels = cov_names_intercept,tick = F)
-  
-  x_points = signif(10^seq(xlims[1], xlims[2],length.out = 5),2)
-  axis(1, at = log10(x_points), labels = x_points)
+  axis(2, at = 1:ncol(alpha_coefs), labels = cov_names_intercept,tick = F)
+  axis(1, at = log(x_points), labels = x_points)
   
   beta_coefs = apply(thetas$slope_coefs,2,quantile,
                      probs=c(0.025,.1,.5,.9,0.975))
   xlims=range(beta_coefs)
+  x_points = axisTicks(xlims,log = T)
+  
+  colnames(beta_coefs) = cov_names_slope
+  print(round(exp(beta_coefs),2))
   plot(beta_coefs['50%', ], 1:ncol(beta_coefs),
-       xlim=xlims,yaxt='n',ylab='',bty='n',xaxt='n',
-       panel.first=grid(), xlab='Slope (multiplicative effect)')
+       xlim=range(log(x_points)),yaxt='n',ylab='',bty='n',xaxt='n',
+       panel.first=grid(), xlab='Slope (multiplicative effect)',pch=16,cex=1.5)
   abline(v=0,lty=2,lwd=2)
   for(i in 1:ncol(beta_coefs)){
     lines(c(beta_coefs['10%',i], beta_coefs['90%',i]),
@@ -407,8 +472,7 @@ plot_coef_effects = function(stan_out, model_plot, cov_mat, stan_inputs){
           c(i,i), lwd=1)
   }
   axis(2, at =1:ncol(beta_coefs), labels = cov_names_slope, tick = F)
-  x_points = signif(10^seq(xlims[1], xlims[2],length.out = 5),2)
-  axis(1, at = log10(x_points), labels = x_points)
+  axis(1, at = log(x_points), labels = x_points)
 }
 
 # Checks a function for use of global variables
@@ -426,7 +490,7 @@ checkStrict <- function(f, silent=FALSE) {
 
 calculate_fever_clearance = function(temp_dat,
                                      window_clear = 24/24 # look ahead window to define "fever clearance"
-                                     ){
+){
   
   if(!'temperature_ax' %in% colnames(temp_dat)) stop('needs to contain a temperature_ax column')
   
