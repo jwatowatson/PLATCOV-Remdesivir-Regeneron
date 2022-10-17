@@ -112,12 +112,12 @@ plot_serial_data = function(xx, trt_cols){
              type='l',col = trt_cols[tt],lwd=3)
   }
   
-  trts = sort(unique(PCR_dat$Trt))
+  trts = unique(PCR_dat$Trt)
   for(i in 1:length(trts)){
     trts[i] = paste0(trts[i],' (n=',sum(PCR_dat$Trt[!duplicated(PCR_dat$ID)]==trts[i]),')')
   }
   legend('topright', col=trt_cols[unique(PCR_dat$Trt)], 
-         legend = unique(PCR_dat$Trt),
+         legend = trts,
          lwd=2,pch=15,cex=1, inset = 0.03)
 }
 

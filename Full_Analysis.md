@@ -1,7 +1,7 @@
 ---
 title: "PLATCOV Statistical Analysis: Regeneron and Remdesivir"
 author: "James Watson"
-date: "10 October, 2022"
+date: "11 October, 2022"
 output:
   html_document:
     toc: yes
@@ -320,7 +320,26 @@ Summary table
 
 
 
-Table: Summary of patient characteristics included in the current interim analysis (n= 232). Age: median (range); baseline viral load (log10 copies per mL: mean (range)); vaccinated: % with any number of doses; number of vaccine doses: median (range); antibody data are from rapid tests done at screening (+ is presence of IgM or IgG band).
+Table: Summary of patient characteristics included in the final Remdesivir analysis (n= 232). Age: median (range); baseline viral load (log10 copies per mL: mean (range)); vaccinated: % with any number of doses; number of vaccine doses: median (range); antibody data are from rapid tests done at screening (+ is presence of IgM or IgG band).
+
+|Arm           |  n|Age          |Baseline viral load (log10) |Number of vaccine doses | Antibody+ (%)| Male (%)| th001| th057| th058| br003|
+|:-------------|--:|:------------|:---------------------------|:-----------------------|-------------:|--------:|-----:|-----:|-----:|-----:|
+|No study drug | 64|29.5 (20-50) |5.5 (3-7.9)                 |3 (0-4)                 |            94|       42|    52|     3|     2|     7|
+|Remdesivir    | 67|28 (19-49)   |5.5 (2.7-7.4)               |3 (0-4)                 |            90|       48|    54|     2|     2|     9|
+
+
+
+Table: Summary of patient characteristics included in the final Regeneron analysis (n= 232). Age: median (range); baseline viral load (log10 copies per mL: mean (range)); vaccinated: % with any number of doses; number of vaccine doses: median (range); antibody data are from rapid tests done at screening (+ is presence of IgM or IgG band).
+
+|Arm                   |  n|Age          |Baseline viral load (log10) |Number of vaccine doses | Antibody+ (%)| Male (%)| th001| th058| th057|
+|:---------------------|--:|:------------|:---------------------------|:-----------------------|-------------:|--------:|-----:|-----:|-----:|
+|Casirivimab
+imdevimab | 74|26 (18-48)   |5.7 (3-7.8)                 |3 (0-5)                 |            88|       36|    70|     3|     1|
+|No study drug         | 84|28.5 (18-46) |5.5 (3-7.9)                 |3 (2-5)                 |            95|       40|    79|     2|     3|
+
+
+
+Table: Summary of patient characteristics included in the final mITT populations (all patients; n= 232). Age: median (range); baseline viral load (log10 copies per mL: mean (range)); vaccinated: % with any number of doses; number of vaccine doses: median (range); antibody data are from rapid tests done at screening (+ is presence of IgM or IgG band).
 
 |Arm                   |  n|Age        |Baseline viral load (log10) |Number of vaccine doses | Antibody+ (%)| Male (%)| th001| th058| th057| br003|
 |:---------------------|--:|:----------|:---------------------------|:-----------------------|-------------:|--------:|-----:|-----:|-----:|-----:|
@@ -854,14 +873,14 @@ Up until 10 June in Thai sites (where regeneron was available)
 ![](Full_Analysis_files/figure-html/Main_Result-1.png)<!-- -->
 
 ```
-##                             2.5% 10% 50% 90% 97.5%
-## All variants                  18  26  42  62    73
-## All variants                   8  13  25  39    46
-## Delta                         10  24  58  98   120
-## Omicron                        3   7  20  33    43
-## Delta                          8  22  50  86   109
-## Omicron:\nG446S mutated      -21 -11   8  39    59
-## Omicron:\nnot G446S mutated    3   9  23  39    49
+##                                            2.5% 10% 50% 90% 97.5%
+## All variants\n(n=67 vs n=64)                 18  26  42  62    73
+## All variants\n(n=74 vs n=84)                  8  13  25  39    46
+## Delta\n(n=13 vs n=10)                        10  24  58  98   120
+## Omicron\n(n=61 vs n=74)                       3   7  20  33    43
+## Delta\n(n=13 vs n=10)                         8  22  50  86   109
+## Omicron\nG446S mutated\n(n=15 vs n=11)      -21 -11   8  39    59
+## Omicron\nnot G446S mutated\n(n=46 vs n=63)    3   9  23  39    49
 ```
 
 

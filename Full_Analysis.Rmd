@@ -256,8 +256,15 @@ table(platcov_dat$Variant[ind_dup])
 writeLines('Variants in mITT database by treatment:')
 table(platcov_dat$Trt[ind_dup], platcov_dat$Variant[ind_dup])
 
+xx=make_baseline_table(input_data = platcov_dat[platcov_dat$Remdesivir_analysis,])
+knitr::kable(xx, caption = sprintf('Summary of patient characteristics included in the final Remdesivir analysis (n= %s). Age: median (range); baseline viral load (log10 copies per mL: mean (range)); vaccinated: %% with any number of doses; number of vaccine doses: median (range); antibody data are from rapid tests done at screening (+ is presence of IgM or IgG band).', sum(PP$Include_mITT)))
+
+
+xx=make_baseline_table(input_data = platcov_dat[platcov_dat$Regeneron_analysis,])
+knitr::kable(xx, caption = sprintf('Summary of patient characteristics included in the final Regeneron analysis (n= %s). Age: median (range); baseline viral load (log10 copies per mL: mean (range)); vaccinated: %% with any number of doses; number of vaccine doses: median (range); antibody data are from rapid tests done at screening (+ is presence of IgM or IgG band).', sum(PP$Include_mITT)))
+
 xx=make_baseline_table(input_data = platcov_dat)
-knitr::kable(xx, caption = sprintf('Summary of patient characteristics included in the current interim analysis (n= %s). Age: median (range); baseline viral load (log10 copies per mL: mean (range)); vaccinated: %% with any number of doses; number of vaccine doses: median (range); antibody data are from rapid tests done at screening (+ is presence of IgM or IgG band).', sum(PP$Include_mITT)))
+knitr::kable(xx, caption = sprintf('Summary of patient characteristics included in the final mITT populations (all patients; n= %s). Age: median (range); baseline viral load (log10 copies per mL: mean (range)); vaccinated: %% with any number of doses; number of vaccine doses: median (range); antibody data are from rapid tests done at screening (+ is presence of IgM or IgG band).', sum(PP$Include_mITT)))
 ```
 
 ## Summary data plot
@@ -984,9 +991,13 @@ trt_matrix =
         trt_delta_regn, trt_omicron_regn,
         trt_delta_g446s_regn, trt_omicron_g446s_regn, trt_omicron_notg446s_regn
   )
-rownames(trt_matrix) = c('All variants','All variants','Delta','Omicron',
-                         'Delta','Omicron:\nG446S mutated',
-                         'Omicron:\nnot G446S mutated')
+rownames(trt_matrix) = c('All variants\n(n=67 vs n=64)',
+                         'All variants\n(n=74 vs n=84)',
+                         'Delta\n(n=13 vs n=10)',
+                         'Omicron\n(n=61 vs n=74)',
+                         'Delta\n(n=13 vs n=10)',
+                         'Omicron\nG446S mutated\n(n=15 vs n=11)',
+                         'Omicron\nnot G446S mutated\n(n=46 vs n=63)')
 par(las=1, mar=c(5, 9, 2, 10), family='serif',cex.lab=1.1, cex.axis=1.1, bty='n')
 plot(trt_matrix[,'50%'], 1:nrow(trt_matrix), 
      panel.first=grid(nx = NA, ny = NULL),
